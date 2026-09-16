@@ -63,6 +63,10 @@ template <typename T> double mean(T &t) {
 }
 
 double area(double d) { return std::numbers::pi * d * d / 4.; }
+// mm
+auto from_grid_to_len(double n) { return n * 0.01 * 2.; };
+// N
+auto from_grid_to_force(double n) { return n * 2 * 10 * 9.81; };
 
 int main() {
   using data_type = std::vector<std::array<double, 11>>;
@@ -87,9 +91,9 @@ int main() {
 
   for (auto &measure : control_points) {
     // F, [N]
-    measure[0] *= 2 * 10 * 9.81;
+    measure[0] = from_grid_to_force(measure[0]);
     // dl, [mm]
-    measure[1] *= 2 * 0.01;
+    measure[1] = from_grid_to_len(measure[1]);
   }
   for (auto &measure : control_points) {
     // d [mm]
@@ -97,19 +101,19 @@ int main() {
     // F - [mm^2]
     measure[4] = area(measure[3]);
 
-    // sigma - [Pa / cm^2]
-    measure[5] = measure[0] / F0 * 100.; // <- Pa / cm^2 | Pa / mm^2
-    // S - [Pa / cm^2]
-    measure[6] = measure[0] / measure[4] * 100.; // <- Pa / cm^2 | Pa / mm^2
+    // sigma - [MPa]
+    measure[5] = measure[0] / F0;
+    // S - [MPa]
+    measure[6] = measure[0] / measure[4];
 
-    // epsilon
+    // epsilon, [%]
     measure[7] = measure[1] / l0 * 100.;
-    // psi
+    // psi, [%]
     measure[8] = (F0 - measure[4]) / F0 * 100.;
 
-    // e
+    // e, [%]
     measure[9] = log(1 + measure[7]);
-    // psi_
+    // psi_, [%]
     measure[10] = log(F0 / measure[4]);
   }
 
@@ -130,12 +134,12 @@ int main() {
 
     for (auto &measure : many_p) {
       // P, [N]
-      measure[1] *= 2 * 10 * 9.81;
+      measure[1] = from_grid_to_force(measure[1]);
       // dl, [mm]
-      measure[0] *= 2 * 0.01;
-      // epsilon
+      measure[0] = from_grid_to_len(measure[0]);
+      // epsilon, [%]
       measure[2] = measure[0] / l0 * 100.;
-      // sigma
+      // sigma, [MPa]
       measure[3] = measure[1] / F0;
     }
     std::ofstream out("out_a.csv");
@@ -146,15 +150,21 @@ int main() {
     }
   }
   double limit_of_proportionality_1 = 25;
-  double limit_of_proportionality_2 = 36;
-  double yield_strength = 35;
-  double temporary_tear_resistance = 38;
-  auto from_grid_to_force = [](double n) { return n * 2 * 10 * 9.81; };
+  double limit_of_proportionality_2 = 31;
+  double yield_strength = 30;
+  double temporary_tear_resistance = 33;
 
-  std::cout << from_grid_to_force(limit_of_proportionality_1) << "\n"
+  std::cout << "force, [N]: \n"
+            << from_grid_to_force(limit_of_proportionality_1) << "\n"
             << from_grid_to_force(limit_of_proportionality_2) << "\n"
             << from_grid_to_force(yield_strength) << "\n"
-            << from_grid_to_force(temporary_tear_resistance);
+            << from_grid_to_force(temporary_tear_resistance) << "\n";
+
+  std::cout << "sigma, [MPa]: \n"
+            << from_grid_to_force(limit_of_proportionality_1) / F0 << "\n"
+            << from_grid_to_force(limit_of_proportionality_2) / F0 << "\n"
+            << from_grid_to_force(yield_strength) / F0 << "\n"
+            << from_grid_to_force(temporary_tear_resistance) / F0 << "\n";
 
   // residual relative narrowing
   std::cout << "psi last " << (F0 - control_points.back()[4]) / F0 * 100.
@@ -162,8 +172,8 @@ int main() {
 
   double def_plastic = 26;
   double def_elastic = 20;
-  auto from_grid_to_len = [](double n) { return n * 0.01 * 2. / 1000.; };
-  std::cout << "DEF" << std::endl
+
+  std::cout << "DEF, [mm]" << std::endl
             << "\telastic: " << from_grid_to_len(def_elastic) << std::endl
             << "\tplastic: " << from_grid_to_len(def_plastic) << std::endl;
 

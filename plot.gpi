@@ -7,8 +7,8 @@ set datafile separator '\t'
 set terminal png size 800,600
 set output "plot_sigma-epsilon.png"
 set title "sigma(epsilon)"
-set xlabel "epsilon"
-set ylabel "sigma, N" 
+set xlabel "epsilon, %"
+set ylabel "sigma, MPa" 
 plot "out.csv" using 9:7 with lines title "Experiment"
 
 set offsets graph 0.2, graph 0, graph 0, graph 0
@@ -16,8 +16,8 @@ set offsets graph 0.2, graph 0, graph 0, graph 0
 set terminal png size 800,600
 set output "plot_S-psi.png"
 set title "S(psi)"
-set xlabel "psi"
-set ylabel "S, N" 
+set xlabel "psi, %"
+set ylabel "S, MPa" 
 plot "out.csv" using 10:8 with lines title "Experiment"
 set offsets graph 0, graph 0, graph 0, graph 0
 
@@ -26,8 +26,8 @@ set offsets graph 0, graph 0, graph 0, graph 0
 set terminal png size 800,600
 set output "plot_S-e.png"
 set title "S(e)"
-set xlabel "e"
-set ylabel "S, N" 
+set xlabel "e, %"
+set ylabel "S, MPa" 
 plot "out.csv" using 11:8 with lines title "Experiment"
 
 set datafile separator ' '
@@ -35,14 +35,14 @@ set datafile separator ' '
 set terminal png size 800,600
 set output "plot_P-dl.png"
 set title "P(dl)"
-set xlabel "dl"
+set xlabel "dl, mm"
 set ylabel "P, N" 
 plot "out_a.csv" using 1:2 with lines title "Experiment"
 
 set terminal png size 800,600
 set output "plot_sigma-epsilon'.png"
 set title "sigma(epsilon)"
-set xlabel "epsilon"
-set ylabel "sigma, N" 
+set xlabel "epsilon, %"
+set ylabel "sigma, MPa" 
 plot "out_a.csv" using 3:4 with lines title "Experiment"
 
