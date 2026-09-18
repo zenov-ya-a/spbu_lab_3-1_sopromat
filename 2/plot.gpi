@@ -1,0 +1,21 @@
+#! /usr/bin/gnuplot -persist
+
+set key right top
+set grid
+
+set datafile separator ' '
+
+set terminal png size 800,600
+set output "plot_M-phi.png"
+set title "M(phi)"
+set ylabel "M, H * m^2" 
+set xlabel "phi, rad"
+plot "out.csv" using 5:4 with lines title "Experiment"
+
+set terminal png size 800,600
+set output "plot_tau-gamma.png"
+set title "tau(gamma)"
+set ylabel "tau, Pa"
+set xlabel "gamma, rad" 
+plot "out.csv" using 6:7 with lines title "Experiment"
+
