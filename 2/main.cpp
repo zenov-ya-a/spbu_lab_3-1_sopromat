@@ -1,9 +1,11 @@
 
+#include <array>
 #include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <numbers>
 #include <sstream>
+#include <vector>
 // [cm]
 using std::runtime_error;
 
@@ -39,6 +41,7 @@ double compute_M(double P) {
 }
 
 // M [H * m]
+// return [Pa]
 double compute_tau(double M) {
   // M * r / I
   // [H * m] * [m] / [m^4]
@@ -66,8 +69,13 @@ int main() {
   if (!in_file || !out) {
     throw runtime_error("file not found!");
   }
-  out << "N P Delta phi M tau gamma G" << std::endl;
+  out << "N" << "\t" << "P" << "\t" << "Delta" << "\t" << "phi" << "\t" << "M"
+      << "\t" << "tau" << "\t" << "gamma"
+      << "\t" << "G" << std::endl;
+
+  in_file.ignore(1000, '\n');
   std::string buffer;
+  std::vector<std::tuple<size_t, double, size_t>> in_data;
   while (std::getline(in_file, buffer)) {
     std::stringstream in(buffer);
 
@@ -76,7 +84,13 @@ int main() {
     size_t mass_count;
 
     in >> N >> Delta >> mass_count;
+    in_data.push_back({N, Delta, mass_count});
+  }
 
+  double Delta0 = std::get<1>(in_data.front());
+
+  for (auto [N, Delta, mass_count] : in_data) {
+    Delta -= Delta0;
     double P = compute_P(mass_count);
     double phi = compute_phi(Delta);
     double M = compute_M(P);
@@ -84,8 +98,8 @@ int main() {
     double gamma = compute_gamma(phi);
     double G = compute_G(M, phi);
 
-    out << N << " " << P << " " << Delta << " " << phi << " " << M << " " << tau
-        << " " << gamma << " " << G << std::endl;
+    out << N << "\t" << P << "\t" << Delta << "\t" << phi << "\t" << M << "\t"
+        << tau << "\t" << gamma << "\t" << G << std::endl;
   }
   return 0;
 }
