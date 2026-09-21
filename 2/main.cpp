@@ -1,43 +1,51 @@
 
 #include <array>
+#include <cmath>
 #include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <numbers>
+#include <ranges>
 #include <sstream>
 #include <vector>
-// [cm]
+
 using std::runtime_error;
 
-const double D = 10.96;
+// [cm]
 const double d = 0.63;
-const double l0 = 129.;
+const double D = 10.96;
 const double L = 115.;
-// [kg]
-const double m = 50. / 1000.;
-// [m]
-const double D_ = D / 100.;
-// [m^4]
-const double I_x = std::numbers::pi * D_ * D_ * D_ * D_ / 32.;
+const double l0 = 129.;
+// [g]
+const double m = 50.;
 
-// [m]
-const double r = d / 2. / 100.;
+// [m^4]
+const double I_x = std::numbers::pi * pow(d / 100., 4) / 32.;
+
+// [cm]
+const double d_d = 0.005;
+const double d_D = 0.005;
+const double d_L = 0.1;
+const double d_l0 = 0.1;
+const double d_Delta = 0.1;
+// [g]
+const double d_m = 1;
 
 // Delta [cm]
 double compute_phi(double Delta) { return Delta / (2. * L); }
 
 // return [N]
 double compute_P(size_t count) {
-  // 2 * count * m * g
+  // count * m * g
   // [1] * [kg] * [m / s^2]
-  return count * m * 9.81;
+  return count * m / 1000. * 9.81;
 }
 
 // return [H * m]
 double compute_M(double P) {
-  // 2 * (r * m * g)
-  // [m] * [kg] * [m / s^2]
-  return 2 * r * P;
+  // D * P
+  // [m] * [H]
+  return D / 100. * P;
 }
 
 // M [H * m]
@@ -45,7 +53,7 @@ double compute_M(double P) {
 double compute_tau(double M) {
   // M * r / I
   // [H * m] * [m] / [m^4]
-  return M * r / I_x;
+  return M * d / 2. / 100. / I_x;
 }
 
 double compute_gamma(double phi) {
@@ -65,14 +73,11 @@ double compute_G(double M, double phi) {
 int main() {
   std::ifstream in_file("raw_data.csv");
   // std::ofstream out("out.csv");
-  std::ostream &out = std::cout;
+  std::ofstream out_file("out.csv");
+  std::ostream &out = out_file; // std::cout;
   if (!in_file || !out) {
     throw runtime_error("file not found!");
   }
-  out << "N" << "\t" << "P" << "\t" << "Delta" << "\t" << "phi" << "\t" << "M"
-      << "\t" << "tau" << "\t" << "gamma"
-      << "\t" << "G" << std::endl;
-
   in_file.ignore(1000, '\n');
   std::string buffer;
   std::vector<std::tuple<size_t, double, size_t>> in_data;
@@ -86,6 +91,10 @@ int main() {
     in >> N >> Delta >> mass_count;
     in_data.push_back({N, Delta, mass_count});
   }
+
+  out << "N" << "\t" << "P" << "\t" << "Delta" << "\t" << "phi" << "\t" << "M"
+      << "\t" << "tau" << "\t" << "gamma"
+      << "\t" << "G" << std::endl;
 
   double Delta0 = std::get<1>(in_data.front());
 
@@ -101,5 +110,35 @@ int main() {
     out << N << "\t" << P << "\t" << Delta << "\t" << phi << "\t" << M << "\t"
         << tau << "\t" << gamma << "\t" << G << std::endl;
   }
+
+  double mean_G = 0.;
+  double mean_Delta = 0.;
+  double mean_mass_count = 0.;
+  std::ranges::subrange in_data_computed{in_data.begin() + 1,
+                                         in_data.end() - 1};
+  for (auto [N, Delta, mass_count] : in_data_computed) {
+    Delta -= Delta0;
+    double P = compute_P(mass_count);
+    double phi = compute_phi(Delta);
+    double M = compute_M(P);
+    double G = compute_G(M, phi);
+
+    mean_G += G;
+    mean_Delta += Delta;
+    mean_mass_count += mass_count;
+  }
+
+  mean_G /= (double)in_data_computed.size();
+  mean_Delta /= (double)in_data_computed.size();
+  mean_mass_count /= (double)in_data_computed.size();
+
+  double epsilon_G = sqrt(pow(4 * d_d / d, 2) + pow(d_Delta / mean_Delta, 2) +
+                          pow(d_D / D, 2) + pow(mean_mass_count * d_m / m, 2) +
+                          pow(d_l0 / l0, 2) + pow(d_L / L, 2));
+
+  double Delta_G = mean_G * epsilon_G;
+
+  std::cout << mean_G << " +- " << Delta_G << std::endl;
+
   return 0;
 }
