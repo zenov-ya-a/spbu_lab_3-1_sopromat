@@ -81,6 +81,7 @@ int main() {
   in_file.ignore(1000, '\n');
   std::string buffer;
   std::vector<std::tuple<size_t, double, size_t>> in_data;
+
   while (std::getline(in_file, buffer)) {
     std::stringstream in(buffer);
 
@@ -131,14 +132,28 @@ int main() {
   mean_G /= (double)in_data_computed.size();
   mean_Delta /= (double)in_data_computed.size();
   mean_mass_count /= (double)in_data_computed.size();
+  std::printf("mean\n\tG : %f\n\tDelta : %f\n\tmass_count : %f\n", mean_G,
+              mean_Delta, mean_mass_count);
 
-  double epsilon_G = sqrt(pow(4 * d_d / d, 2) + pow(d_Delta / mean_Delta, 2) +
-                          pow(d_D / D, 2) + pow(mean_mass_count * d_m / m, 2) +
-                          pow(d_l0 / l0, 2) + pow(d_L / L, 2));
+  double epsilon_d = d_d / d;
+  double epsilon_Delta = d_Delta / mean_Delta;
+  double epsilon_m = d_m / m;
+  double epsilon_D = d_D / D;
+  double epsilon_l0 = d_l0 / l0;
+  double epsilon_L = d_L / L;
+  double epsilon_G =
+      sqrt(pow(4 * epsilon_d, 2) + pow(epsilon_Delta, 2) + pow(epsilon_m, 2) +
+           pow(epsilon_D, 2) + pow(epsilon_l0, 2) + pow(epsilon_L, 2));
+
+  std::printf("%f %f %f %f %f %f\n\tepsilon_G :  %f\n", epsilon_d,
+              epsilon_Delta, epsilon_m, epsilon_D, epsilon_l0, epsilon_L,
+              epsilon_G);
 
   double Delta_G = mean_G * epsilon_G;
 
   std::cout << mean_G << " +- " << Delta_G << std::endl;
+
+  std::cout << I_x << "\n";
 
   return 0;
 }
