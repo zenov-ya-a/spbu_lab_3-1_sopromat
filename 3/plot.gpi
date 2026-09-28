@@ -14,7 +14,7 @@ plot "out1.csv" using 1:2 with points pt 7 title "Experiment"
 
 set terminal png size 800,600
 set output "plot_2.png"
-set title "H(D)"
+set title "H(t)"
 set ylabel "H" 
 set xlabel "t"
 plot "raw_data_2.csv" using 3:2 with points pt 7 title "Experiment"
@@ -28,7 +28,7 @@ plot "raw_data_3.csv" using 1:2 with points pt 7 title "Experiment"
 
 set terminal png size 800,600
 set output "plot_4.png"
-set title "H(D)"
+set title "H(P)"
 set ylabel "H" 
 set xlabel "P"
 plot "raw_data_4.csv" using 3:2 with points pt 7 title "Experiment"
