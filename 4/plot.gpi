@@ -1,0 +1,32 @@
+#! /usr/bin/gnuplot -persist
+
+# set key right top
+set grid
+
+set datafile separator '\t'
+
+set terminal png size 800,600
+set output "plot_1.png"
+set title "e(F)"
+set ylabel "e" 
+set xlabel "F"
+plot "out1.csv" using 1:5 with lines, "out1.csv" using 1:6 with lines
+
+set key left top
+set terminal png size 800,600
+set output "plot_2.png"
+set title "sigma(F)"
+set ylabel "sigma" 
+set xlabel "F"
+plot "out1.csv" using 1:7 with lines title "experiment",\
+  "out1.csv" using 1:10 with lines title "computed",\
+  "out1.csv" using 1:8 with lines title "experiment",\
+  "out1.csv" using 1:11 with lines title "computed",
+
+set terminal png size 800,600
+set output "plot_3.png"
+set title "sigma_{xx}(epsilon_{xx})"
+set ylabel "sigma_{xx}" 
+set xlabel "epsilon_{xx}"
+plot "out2.csv" using 4:6 with points pt 7 ps 3 title "Experiment"
+
