@@ -44,3 +44,11 @@ plot "out2.csv" using 1:5 with lines lw 3 title "tetta1 exp", "out2.csv" using 1
   "out2.csv" using 1:6 with lines lw 3 title "tetta2 exp", "out2.csv" using 1:12 with lines lw 3 title "tetta2 comp", \
   "out2.csv" using 1:7 with lines lw 3 title "tetta3 exp", "out2.csv" using 1:13 with lines lw 3 title "tetta3 comp"
 
+
+set terminal png size 1600,1200
+set output "plot_5.png"
+set title "M(z)"
+set ylabel "M" 
+set xlabel "z"
+plot "./out_p1.csv" using 1:2 with lines lw 3 title "M 1", "./out_p2.csv" using 1:2 with lines lw 3 title "M 2"
+

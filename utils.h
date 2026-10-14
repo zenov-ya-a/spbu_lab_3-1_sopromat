@@ -79,7 +79,7 @@ void print_result(const std::string &description,
   });
 }
 void print_result(const std::string &description,
-                  std::ranges::input_range auto &data, std::ostream &&out) {
+                  std::ranges::input_range auto &&data, std::ostream &&out) {
   print_result(description, data, out);
 }
 
@@ -135,6 +135,9 @@ struct Millimets {
   constexpr Millimets(double value) : value(value) {}
   constexpr operator double() const { return value / 1000.; }
 };
+
+using mm = Millimets;
+using sm = Santimets;
 
 } // namespace utils
 

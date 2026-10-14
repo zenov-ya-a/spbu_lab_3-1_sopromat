@@ -102,8 +102,8 @@ auto compute(double p_dist, auto &data) {
 }
 
 void main() {
-  utils::Santimets p_dist_1 = 18.5;
-  utils::Santimets p_dist_2 = 18.5 + 9 + 8.5;
+  double p_dist_1 = utils::sm(1 + 17.5);
+  double p_dist_2 = utils::sm(1 + 17.5 + 9 + 8.5);
 
   auto data = utils::read_file_csv<data_type>("./raw_data_1.csv");
   auto a1 = compute(p_dist_1, data);
@@ -111,6 +111,7 @@ void main() {
       "P\ty1_exp\ty2_exp\ty3_exp\ttetta1_exp\ttetta2_exp\ttetta3_exp\ty1_"
       "comp\ty2_comp\ty3_comp\ttetta1_comp\ttetta2_comp\ttetta3_comp",
       a1, std::ofstream("out1.csv"));
+
   {
     auto data = utils::read_file_csv<data_type>("./raw_data_2.csv");
     auto a1 = compute(p_dist_2, data);
@@ -119,6 +120,29 @@ void main() {
         "comp\ty2_comp\ty3_comp\ttetta1_comp\ttetta2_comp\ttetta3_comp",
         a1, std::ofstream("out2.csv"));
   }
+  auto f = [](double z, double p) {
+    if (z < l1) {
+      return 0.;
+    }
+    if (z < l1 + p) {
+      return (z - l1) * (L - p) / L;
+    }
+    if (z < l1 + l2 + l3) {
+      return (z - l1) * (L - p) / L - (z - p - l1);
+    }
+    return (z - l1) * (L - p) / L - (z - p - l1) + (z - l1 - l2 - l3) * p / L;
+  };
+  auto gen = [&f](double p) {
+    std::vector<double> points({0., l1, p, L - p, l4});
+    std::partial_sum(points.cbegin(), points.cend(), points.begin());
+
+    return std::ranges::owning_view(std::move(points)) |
+           std::views::transform([&f, p](const double &e) {
+             return std::make_tuple(e, f(e, p));
+           });
+  };
+  utils::print_result("z\tM", gen(p_dist_1), std::ofstream("./out_p1.csv"));
+  utils::print_result("z\tM", gen(p_dist_2), std::ofstream("./out_p2.csv"));
 }
 } // namespace lab6
 
