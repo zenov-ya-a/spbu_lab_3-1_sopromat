@@ -1,0 +1,46 @@
+#! /usr/bin/gnuplot -persist
+
+# set key right top
+set grid
+
+set datafile separator '\t'
+
+set key left top
+
+set terminal png size 1600,1200
+set output "plot_1.png"
+set title "y(F)"
+set ylabel "y" 
+set xlabel "F"
+plot "out1.csv" using 1:2 with lines lw 3 title "y1 exp", "out1.csv" using 1:8 with lines lw 3 title "y1 comp", \
+  "out1.csv" using 1:3 with lines lw 3 title "y2 exp", "out1.csv" using 1:9 with lines lw 3 title "y2 comp", \
+  "out1.csv" using 1:4 with lines lw 3 title "y3 exp", "out1.csv" using 1:10 with lines lw 3 title "y3 comp"
+
+set terminal png size 1600,1200
+set output "plot_2.png"
+set title "tetta(F)"
+set ylabel "tetta" 
+set xlabel "F"
+plot "out1.csv" using 1:5 with lines lw 3 title "tetta1 exp", "out1.csv" using 1:11 with lines lw 3 title "tetta1 comp", \
+  "out1.csv" using 1:6 with lines lw 3 title "tetta2 exp", "out1.csv" using 1:12 with lines lw 3 title "tetta2 comp", \
+  "out1.csv" using 1:7 with lines lw 3 title "tetta3 exp", "out1.csv" using 1:13 with lines lw 3 title "tetta3 comp"
+
+
+set terminal png size 1600,1200
+set output "plot_3.png"
+set title "y(F)"
+set ylabel "y" 
+set xlabel "F"
+plot "out2.csv" using 1:2 with lines lw 3 title "y1 exp", "out2.csv" using 1:8 with lines lw 3 title "y1 comp", \
+  "out2.csv" using 1:3 with lines lw 3 title "y2 exp", "out2.csv" using 1:9 with lines lw 3 title "y2 comp", \
+  "out2.csv" using 1:4 with lines lw 3 title "y3 exp", "out2.csv" using 1:10 with lines lw 3 title "y3 comp"
+
+set terminal png size 1600,1200
+set output "plot_4.png"
+set title "tetta(F)"
+set ylabel "tetta" 
+set xlabel "F"
+plot "out2.csv" using 1:5 with lines lw 3 title "tetta1 exp", "out2.csv" using 1:11 with lines lw 3 title "tetta1 comp", \
+  "out2.csv" using 1:6 with lines lw 3 title "tetta2 exp", "out2.csv" using 1:12 with lines lw 3 title "tetta2 comp", \
+  "out2.csv" using 1:7 with lines lw 3 title "tetta3 exp", "out2.csv" using 1:13 with lines lw 3 title "tetta3 comp"
+
