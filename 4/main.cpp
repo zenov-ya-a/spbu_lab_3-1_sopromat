@@ -8,14 +8,16 @@
 
 // koeff
 constexpr double K = 6.4e-7;
+using utils::operator""_mm;
+using utils::operator""_sm;
 
 namespace lab4 {
 
 // mm
-constexpr utils::Millimets a = 300.;
-constexpr utils::Millimets l = 260.;
-constexpr utils::Millimets d = 41.;
-constexpr utils::Millimets h = 1.;
+constexpr double a = 300._mm;
+constexpr double l = 260._mm;
+constexpr double d = 41._mm;
+constexpr double h = 1._mm;
 
 // kg
 constexpr double m = 1.;
@@ -119,8 +121,8 @@ namespace lab5 {
 constexpr double P = 50.;
 
 // cm
-constexpr utils::Santimets d = 2.86;
-constexpr utils::Santimets h = 0.246;
+constexpr auto d = 2.86_sm;
+constexpr auto h = 0.246_sm;
 // m^2
 constexpr double S0 = d * h;
 
