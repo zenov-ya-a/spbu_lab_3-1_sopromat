@@ -8,16 +8,21 @@
 
 namespace lab6 {
 
+using utils::mm;
+using utils::sm;
+using utils::operator""_sm;
+using utils::operator""_mm;
+
 // H
 constexpr double F = 0.1 * 9.8;
 
-constexpr utils::Millimets K = 0.01;
+constexpr double K = 0.01_mm;
 
-constexpr utils::Santimets d = 3.6;
-constexpr utils::Santimets h = 0.55;
+constexpr double d = 3.6_sm;
+constexpr double h = 0.55_sm;
 
-constexpr utils::Santimets l1 = 7., l2 = 1. + 17.5 + 9., l3 = 8.5 + 28.5 + 1.,
-                           l4 = 7.;
+constexpr double l1 = 7_sm, l2 = (1 + 17.5 + 9.) * sm,
+                 l3 = (8.5 + 28.5 + 1) * sm, l4 = 7_sm;
 constexpr double L = l2 + l3;
 
 // ---------|----------------|----------------|-----------------
@@ -84,8 +89,9 @@ private:
   double p_dist, P, c1, c2;
 };
 
-auto compute(double p_dist, auto &data) {
-  return data | std::views::transform([](const auto &e) {
+auto compute(double p_dist, const std::string &file_name) {
+  return utils::read_file_csv<data_type>(file_name) |
+         std::views::transform([](const auto &e) {
            auto [N, t1, t2, t3] = e;
            return std::make_tuple(N * F, t1 * K, t2 * K, t3 * K);
          }) |
@@ -102,24 +108,17 @@ auto compute(double p_dist, auto &data) {
 }
 
 void main() {
-  double p_dist_1 = utils::sm(1 + 17.5);
-  double p_dist_2 = utils::sm(1 + 17.5 + 9 + 8.5);
+  double p_dist_1 = (1 + 17.5) * sm;
+  double p_dist_2 = (1 + 17.5 + 9 + 8.5) * sm;
 
-  auto data = utils::read_file_csv<data_type>("./raw_data_1.csv");
-  auto a1 = compute(p_dist_1, data);
-  utils::print_result(
+  auto descripsion =
       "P\ty1_exp\ty2_exp\ty3_exp\ttetta1_exp\ttetta2_exp\ttetta3_exp\ty1_"
-      "comp\ty2_comp\ty3_comp\ttetta1_comp\ttetta2_comp\ttetta3_comp",
-      a1, std::ofstream("out1.csv"));
+      "comp\ty2_comp\ty3_comp\ttetta1_comp\ttetta2_comp\ttetta3_comp";
+  utils::print_result(descripsion, compute(p_dist_1, "./raw_data_1.csv"),
+                      std::ofstream("out1.csv"));
 
-  {
-    auto data = utils::read_file_csv<data_type>("./raw_data_2.csv");
-    auto a1 = compute(p_dist_2, data);
-    utils::print_result(
-        "P\ty1_exp\ty2_exp\ty3_exp\ttetta1_exp\ttetta2_exp\ttetta3_exp\ty1_"
-        "comp\ty2_comp\ty3_comp\ttetta1_comp\ttetta2_comp\ttetta3_comp",
-        a1, std::ofstream("out2.csv"));
-  }
+  utils::print_result(descripsion, compute(p_dist_2, "./raw_data_2.csv"),
+                      std::ofstream("out2.csv"));
   auto f = [](double z, double p) {
     if (z < l1) {
       return 0.;

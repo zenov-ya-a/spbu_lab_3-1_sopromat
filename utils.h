@@ -122,22 +122,17 @@ static double student_coef(size_t n, double alpha) {
   return t_stat;
 }
 
-struct Santimets {
-  double value;
+constexpr long double mm = 0.001;
+constexpr long double sm = 0.01;
 
-  constexpr Santimets(double value) : value(value) {}
-  constexpr operator double() const { return value / 100.; }
-};
-
-struct Millimets {
-  double value;
-
-  constexpr Millimets(double value) : value(value) {}
-  constexpr operator double() const { return value / 1000.; }
-};
-
-using mm = Millimets;
-using sm = Santimets;
+inline constexpr long double operator""_mm(unsigned long long x) {
+  return x * mm;
+}
+inline constexpr long double operator""_mm(long double x) { return x * mm; }
+inline constexpr long double operator""_sm(unsigned long long x) {
+  return x * sm;
+}
+inline constexpr long double operator""_sm(long double x) { return x * sm; }
 
 } // namespace utils
 
