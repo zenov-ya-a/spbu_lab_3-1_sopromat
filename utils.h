@@ -108,7 +108,7 @@ std::pair<double, double> compute_data_stat(DataLike auto &&data) {
   return std::make_pair(mean, s);
 }
 
-static double student_coef(size_t n, double alpha) {
+inline double student_coef(size_t n, double alpha) {
   if (n <= 1) {
     return 0.0;
   }
